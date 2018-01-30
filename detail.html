@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>详情页</title>
+    <link rel="stylesheet" href="css/detail.css">
+</head>
+<body>
+      <!-- 顶部登录注册 -->
+      <header>
+            <div class="mask">      
+            <div class="box box1">
+                <span id="close_all">X</span>
+                 <h2>账号密码登录</h2>
+                    <p><input type="text" name="username" placeholder="请输入用户名3-20"/></p>
+                    <p><input type="password" name="password" placeholder="请输入密码6-20"/></p>
+                    <p><input type="button" id="login1" value="登录"/></p>
+                    <ul>
+                        <li><a href="">忘记密码?</a></li>
+                        <li><a href="">注册账号</a></li>
+                        <li><a href="">意见反馈</a></li>
+                    </ul>
+            </div>
+            <script src="js/jquery-1.12.3.min.js" type="text/javascript" charset="utf-8"></script>
+            <script>
+            $("#login1").click(function(){
+                var username = $('input[name="username"]').val();
+                var password = $('input[name="password"]').val();
+                console.log(username,password);
+                $.ajax({
+                    "url":"http://h6.duchengjiu.top/shop/api_user.php",
+                    "type":"POST",
+                    "dataType": "json",
+                    "data": {
+                        "status": "login",
+                        "username": username,
+                        "password": password
+                    },
+            "success": function(response){
+                        console.log(response);
+                        if(response.code === 0){
+                            var data = response.data;
+                            for(prop in data ){
+                                localStorage.setItem(prop,data[prop]);
+                            }
+                            alert(response.message);
+                            var callbackURL = location.hash.substr(10)
+                            if( callbackURL ){
+                                window.location.href = callbackURL;
+                            }else{
+                                window.location.href = "detail.html";
+                            }	
+                        }else{
+                                alert(response.message)
+                            }
+                    }
+                })		
+            })
+            </script>
+            </div>
+        <div class="mid">
+            <h2 class="fl">聚成品，个性彰显，品质至上</h2>
+            <ul class="fr" id="fr">
+                <li id="login"><a href="javascript:;">你好,请登录</a>
+                    </li>
+                    <li><a href="register.html" id="register">注册</a>
+                        </li>
+            </ul>
+        </div>
+        <script>
+                //判断当前用户是否已经登录，如果已经登录显示用户名，否则显示登录注册的a标签
+            if( localStorage.getItem("token") ){
+                $("#fr").html("欢迎回来 " + localStorage.getItem("username") + '<a href="index.html" id="clear">退出</a>')
+            }  
+            $("#clear").click(function(){
+                localStorage.clear();  //清除所有数据了！
+                $("#fr").html('<li id="login"><a href="javascript:;">你好,请登录</a></li><li><a href="register.html" id="register">注册</a></li>');
+            })
+        </script>  
+         <script>
+         window.onload = function(){
+            $("#login").click(function(){
+                $(".mask").css("display","block");
+                $(".box1").css("display","block");
+            })
+            $("#close_all").click(function(){
+                $(".mask").css("display","none");
+                $(".box1").css("display","none");
+            })      
+        }
+        </script>
+        </header>
+    <!-- 搜索栏 -->
+        <nav>
+            <div class="mid">
+                <a href="index.html" class="logo">
+                </a>
+                <div class="top-nav fl">
+                    <a href=""><img src="img/logo (1).png" alt=""></a>
+                    
+                </div>
+                <div class="top-cont fr">
+                    <input type="text" id="search" placeholder="搜索商品">
+                    <a href="" class="top-sumbit"></a>
+            </div>
+            <div class="top-car comm f1"><a href="cart.html"><span>0</span></a></div>
+            </div>
+        </nav>    
+        <!-- 商品详情 -->
+        <section>
+            <div id="box">
+            <div class="box-l">
+            </div>
+        </div>
+        </section>
+        
+        <script type="text/javascript">
+        //接受location.search获取get传参的数据
+			var str = location.search.substr(1);
+			//用分割方法得到 等号= 两把的内容
+			var goodId = str.split("=");
+			//通过下标方式找到id的值
+			console.log(goodId[1]);
+			$.ajax({
+				"url":"http://h6.duchengjiu.top/shop/api_goods.php",
+				"type": "GET",
+				"dataType": "json",
+				"data": {
+					"goods_id": goodId[1]
+				},
+				"success": function(response){
+					console.log(response);		
+					$("#box").html('<div class="box-l"><img src="'+response.data[0].goods_thumb+'" alt=""></div><div class="box-r"><h1>'+response.data[0].goods_name+'</h1><p class="op">￥' +response.data[0].price+'</p><h3>' +response.data[0].goods_desc+  '</h3><a href="#" class="addCart" goodid="' +response.data[0].goods_id+ '">加入购物车</a><a href="">立即购买</a></div>')	
+                    cart()
+                    // <li><img src="' +response.data[0].goods_thumb+ '" alt="" /><p><a href="#">' +response.data[0].goods_name+  '</a></p><p>' +response.data[0].goods_desc+  '</p><p class="oP">￥' +response.data[0].price+'</p></li>
+				}
+			});
+            function cart(){
+            $(".addCart").click(function(){
+				console.log( $(this).attr("goodid") );
+				var goods_id = $(this).attr("goodid");	
+				//判断当前是否登录，没登录无法加入购物车
+				if( !localStorage.getItem("token") ){		
+                    $(".mask").css("display","block");
+                    $(".box1").css("display","block");
+                    $("#close_all").click(function(){
+                    $(".mask").css("display","none");
+                    $(".box1").css("display","none");
+                    })
+                return;
+				}
+                	//获取本地存储中商品信息
+				var goods_number = localStorage.getItem("cart"+goods_id);
+				
+				//如果有 就是买过，让之前商品商量+1 ，如果没有就是第一次购买 ，那数量 1
+				goods_number = goods_number ? parseInt(goods_number)+1 : 1;
+				
+				$.ajax({
+					"url":"http://h6.duchengjiu.top/shop/api_cart.php?token="+ localStorage.token,
+					"type":"POST",
+					"dataType": "json",
+					"data": {
+						"goods_id":goods_id,
+						"number": goods_number
+					},
+					"success": function(response){
+						console.log(response);					
+						//使用后存储商品数量到本地存储中
+						localStorage.setItem("cart"+goods_id,goods_number);
+					}
+				});
+                alert("加入购物车成功")
+            });
+        };
+        </script>
+</body>
+</html>

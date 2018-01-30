@@ -1,0 +1,137 @@
+.address {
+	width: 100%;
+	background: #f4f4f4;
+	height:auto;
+}
+
+.address .newAddress {
+	display: inline-block;
+	padding:5px 10px;
+	border:1px solid #ccc;
+}
+
+.address .newAddress:hover {
+	cursor: pointer;
+	font-weight: bold;
+
+}
+
+.address ul {
+	width: 80%;
+	min-height: 100px;
+	margin-top: 20px;
+}
+
+.address ul li {
+	display: block;
+	height: 40px;
+	line-height: 40px;
+	text-align: center;
+	cursor: pointer;
+	border: 1px solid #ec4828;
+}
+
+.address ul li span {
+	float: right;
+}
+
+.address ul li:hover {
+	background: #ec4828;
+}
+
+.add {
+	width: 600px;
+	height: 500px;
+	background: white;
+	border:1px solid red;
+	position: absolute;
+	left: 500px;
+	top: 200px;
+	display: none;
+	z-index: 999;
+}
+.add h4{
+	font-size:30px;
+	margin-bottom: 20px;
+	border-bottom: 1px dashed #ccc;
+}
+.add form{
+	font-size: 14px;
+	color: #777;
+	display: block;
+}
+.add p{
+	height: 30px;
+    margin-bottom: 20px;
+    line-height: 30px;
+    position: relative;
+}
+.add span {
+	float: right;
+	position: absolute;
+    right: 0;
+    top: 0;
+    padding: 7px 10px;
+    color: #fff;
+    text-decoration: none;
+    text-align: center;
+	background: #ec4828;
+	cursor: pointer;
+}
+
+.active {
+	background: deepskyblue;
+}
+
+#order {
+	width: 130px;
+	height: 60px;
+	border-radius: 15px;
+	background: #ec4828;
+	font-size: 20px;
+	outline: none;
+}
+.shop{
+	width: 1090px;
+	/*background-color: #e31436;*/
+	margin: 0 auto;
+	margin-top: 50px;
+	font-size: 15px;
+}
+.shop h1{
+	background: #f4f4f4;
+}
+.add-tip {
+	
+    margin: 23px 0 0 23px;
+    font-size: 15px;
+	color: #3a3f4a;
+	line-height:50px;
+	height:auto;
+}
+.add-m{
+	height:50px;
+	margin: 23px 0 0 23px;
+}
+#btn{
+	width: 180px;
+    height: 58px;
+    border: 1px solid #f74a4a;
+    display: block;
+    text-align: center;
+    line-height: 58px;
+	font-size: 18px;
+	background: #ec4828;
+	outline: none;
+	margin: 0 auto;
+}
+.mask {
+    width: 100%;
+    height: 100%;
+    background: rgba(0,0,0,.5);
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 999;
+    display: none;
+}

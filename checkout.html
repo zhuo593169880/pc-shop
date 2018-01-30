@@ -1,0 +1,363 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>订单提交</title>
+    <link rel="stylesheet" href="css/checkout.css" />
+    <link rel="stylesheet" href="css/list.css">
+</head>
+<body>
+    <!-- 顶部登录注册 -->
+    <header>
+            <div class="mask">      
+              <div class="box box1">
+                <span id="close_all">X</span>
+                 <h2>账号密码登录</h2>
+                    <p><input type="text" name="username" placeholder="请输入用户名3-20"/></p>
+                    <p><input type="password" name="password" placeholder="请输入密码6-20"/></p>
+                    <p><input type="button" id="login1" value="登录"/></p>
+                    <ul>
+                        <li><a href="">忘记密码?</a></li>
+                        <li><a href="">注册账号</a></li>
+                        <li><a href="">意见反馈</a></li>
+                    </ul>
+            </div>
+            <script src="js/jquery-1.12.3.min.js" type="text/javascript" charset="utf-8"></script>
+            <script>
+                $("#login1").click(function(){
+                var username = $('input[name="username"]').val();
+                var password = $('input[name="password"]').val();
+                console.log(username,password);
+                $.ajax({
+                    "url":"http://h6.duchengjiu.top/shop/api_user.php",
+                    "type":"POST",
+                    "dataType": "json",
+                    "data": {
+                        "status": "login",
+                        "username": username,
+                        "password": password
+                    },
+                "success": function(response){
+                    console.log(response);
+                        if(response.code === 0){
+                            var data = response.data;
+                            for(prop in data ){
+                                localStorage.setItem(prop,data[prop]);
+                            }
+                            alert(response.message);
+                            var callbackURL = location.hash.substr(10)
+                            if( callbackURL ){
+                                window.location.href = callbackURL;
+                            }else{
+                                window.location.href = "index.html";
+                            }	
+                        }else{
+                                alert(response.message)
+                            }
+                    }
+                })		
+             })
+            </script>
+            </div>
+            <div class="mid">
+               <h2 class="fl">聚成品，个性彰显，品质至上</h2>
+               <ul class="fr" id="fr">
+                  <li id="login"><a href="javascript:;">你好,请登录</a>
+                    </li>
+                    <li><a href="register.html" id="register">注册</a>
+                        </li>
+            </ul>
+        </div>
+        <script>
+                //判断当前用户是否已经登录，如果已经登录显示用户名，否则显示登录注册的a标签
+            if( localStorage.getItem("token") ){
+                $("#fr").html("欢迎回来 " + localStorage.getItem("username") + '<a href="index.html" id="clear">退出</a>')
+            }  
+            $("#clear").click(function(){
+                localStorage.clear();  //清除所有数据了！
+                $("#fr").html('<li id="login"><a href="javascript:;">你好,请登录</a></li><li><a href="register.html" id="register">注册</a></li>');
+            })
+        </script>  
+         <script>
+         window.onload = function(){
+            $("#login").click(function(){
+                $(".mask").css("display","block");
+                $(".box1").css("display","block");
+            })
+            $("#close_all").click(function(){
+                $(".mask").css("display","none");
+                $(".box1").css("display","none");
+            })      
+        }
+        </script>
+        </header>    
+	<!-- 搜索栏 -->
+        <nav>
+            <div class="mid">
+                <a href="index.html" class="logo">
+                </a>
+                <div class="top-nav fl">
+                    <a href=""><img src="img/logo (1).png" alt=""></a>
+                
+                </div>
+                <div class="top-cont fr">
+                    <input type="text" id="search" placeholder="搜索商品">
+                    <a href="" class="top-sumbit"></a>
+                </div>
+                <div class="top-car comm f1"><a href=""><span>0</span></a>
+                </div>
+            </div>
+        </nav>
+	<!-- 主菜单导航栏 -->
+    <div class="nav">
+        <div class="nav-mm">
+            <div class="all-class">
+                <a class="show-all" href=""> 
+                    <s class="comicon i-classify"></s>
+                    <p>所有商品分类</p> 
+                </a>
+            </div>
+            <ul id="blk_header_navbar">
+                <!-- <li><a href=""></a></li> -->
+            </ul>
+            <script type="text/javascript">
+                $.get("http://h6.duchengjiu.top/shop/api_cat.php",function(response){			
+               for(var i=0;i<response.data.length-2;i++){
+                   $("#blk_header_navbar").append('<li><a href="list.html?cat_id=' +response.data[i].cat_id+ '">'+response.data[i].cat_name+'</a></li>');
+               }      		
+           })
+           </script>
+            <div class="cart">
+                <a class="b-cart" href="cart.html"> 
+                    <s class="comicon i-classify"></s>
+                    <p>购物车</p> 
+                    </a>
+            </div>
+        </div>
+    </div>    
+    <div class="shop" id="Shop">
+		<h1>填写收货地址、收货人、联系方式</h1>
+		<div class="address">
+            <div class="add-tip">
+                <!-- <p id="xj"class="fl m110">您还没添加收货地址，请添加~</p> -->
+               <ul class="addess-ul">
+				<!--<li class="address-item" data-id="1">收货人：小王 北京 石景山 136911212123 实兴大街朗诚大厦2楼优才</li>-->
+			</ul> 
+            </div>
+            <div class="add-m">
+                <span class="newAddress">新增地址</span>
+            </div>
+			
+			
+		</div>
+		
+		<div class="add" id="add">
+			<span class="close">X</span>
+			<form action="">
+                <h4>新增收货地址</h4>
+				<p>
+					收货人姓名：
+					<input type="text" name="address_name" placeholder="请输入收货人姓名"/>
+				</p>
+				<p>
+					手机：
+					<input type="text" name="mobile" placeholder="请输入收货人手机号码"/>
+				</p>
+				<p>
+					省：
+					<input type="text" name="province" placeholder="请输入收货人省"/>
+				</p>
+				<p>
+					市：
+					<input type="text" name="city" placeholder="请输入收货人市"/>
+				</p>
+				<p>
+					区：
+					<input type="text" name="district" placeholder="请输入收货人区"/>
+				</p>
+				<p>
+					地址：
+					<input type="text" name="address" placeholder="请输入收货人地址"/>
+				</p>
+				<input type="button" value="确认" id="btn"/>
+			</form>
+        </div>
+            <div id="sum">
+			
+		    </div>
+		
+		    <input type="button" value="下订单" id="order"/>
+		</div>
+		<div class="footer">
+			<div class="mid clearfix">
+				<a href=""><img src="img/djc_logo.png" alt=""></a>
+				<ul class="footer-info fl">
+					<li><a href=""><span class="ic01 in"></span>购物指南</a></li>
+					<li><a href=""><span class="ic02 in"></span>常见操作</a></li>
+					<li><a href=""><span class="ic03 in"></span>关于我们</a></li>
+					<li><a href=""><span class="ic04 in"></span>配送方式</a></li>
+					<li><a href=""><span class="ic05 in"></span>售后服务</a></li>
+				</ul>
+				<ul class="footer-code fl">
+					<li><img src="img/jcp_gzh.jpg" alt=""><p>聚诚品公众号</p></li>
+					<li><img src="img/djc_gzh.jpg" alt=""><p>道聚城公众号</p></li>
+					<li><img src="img/djc_app.png" alt=""><p>掌上道聚城</p></li>
+				</ul>
+			</div>    
+		</div>
+		<div id="footer-ied">				
+		<script src="js/jquery-1.12.3.min.js" type="text/javascript" charset="utf-8"></script>
+		<script type="text/javascript">
+			
+		//信号量
+		address_id = 0;
+			
+			
+		//通过ajax调用数据库收货地址
+		function addreddAjax(){
+			$.ajax({
+				"url": "http://h6.duchengjiu.top/shop/api_useraddress.php?token="+localStorage.token,
+				"type": "GET",
+				"dataType": "json",
+				"success": function(response){
+					console.log(response);
+					
+					var html = '';
+					for(var i=0;i<response.data.length;i++){
+						var obj = response.data[i];
+						
+						html += '<li class="address-item" data-id="' + obj.address_id +'">收货人：'
+								+ obj.address_name
+								+ '省份：' + obj.province
+								+ '市：'   + obj.city
+								+ '地区：' + obj.district
+								+ '街道：' + obj.address
+								+ '手机号' + obj.mobile
+								+ '<span class="remove">删除</span></li>';
+						
+					}
+					$(".addess-ul").html(html);
+					
+					// $(".add-tip").html();
+					
+					//点击改变样式
+					$(".address-item").click(function(event){
+						$(this).addClass("active").siblings().removeClass("active");
+						
+						if(event.target){
+							address_id = event.target.getAttribute("data-id");
+							// console.log(address_id);
+						}
+					})
+					
+					//删除事件
+					$(".remove").click(function(){
+						console.log(this.parentNode);
+						//找到父级li元素
+						var removeLi = this.parentNode;
+						//DOM删除
+						removeLi.parentNode.removeChild(removeLi);
+						//调用ajax删除数据
+						removeAjax(removeLi);
+					})		
+					
+				}
+			})
+		}
+			
+		addreddAjax();	
+		
+		
+		
+		
+		//删除地址业务
+		function removeAjax(obj){
+			console.log( $(obj).attr("data-id") );
+			
+			var address_id = $(obj).attr("data-id");
+			
+			$.ajax({
+				"url":"http://h6.duchengjiu.top/shop/api_useraddress.php?token=" +localStorage.token+ "&status=delete&address_id="+address_id,
+				"type":"get",
+				"dataType": "json",
+				"success": function(response){
+					console.log(response);
+				}
+			});
+			
+		}
+		
+		//显示新增地址
+		$(".newAddress").click(function(){
+			$("#add").show();
+			$(".mask").css("display","block");
+		})
+		//通过点击x字，关闭新增地址
+		$(".close").click(function(){
+			$("#add").hide();
+			$(".mask").css("display","none");
+		})
+		
+		//新建收货地址
+		$("#btn").click(function(){
+			var data = $("form").serialize();
+			console.log(data);
+			
+			
+			$.ajax({
+				"url":"http://h6.duchengjiu.top/shop/api_useraddress.php?token="+localStorage.token+"&status=add",
+				"type":"POST",
+				"dataType": "json",
+				"data": data,
+				"success": function(response){
+					console.log(response)
+					if(response.code === 0){
+						$("#add").hide();
+						$(".mask").css("display","none");
+						addreddAjax();
+					}
+						
+				}
+			});
+		})
+		
+		//获取总金额放入页面
+		//通过location.erarch
+		var sum = location.search.substr(5);
+		
+		$("#sum").html("<h3>当前订单总金额是：￥"+sum+"</h3>");
+		
+		
+		//下订单
+		$("#order").click(function(){
+			
+			if(address_id === 0){
+				alert("请选择地址后在下订单");
+				return;
+			}
+			
+			//订单
+			$.ajax({
+				"url":"http://h6.duchengjiu.top/shop/api_order.php?token="+localStorage.token+"&status=add",
+				"type":"POST",
+				"dataType": "json",
+				"data": {
+					"address_id": address_id, //用户地址id
+					"total_prices": sum
+				},
+				"success": function(response){
+					console.log(response);
+					if(response.code === 0){
+						alert("下订单成功！");
+						location.href = "order.html";
+					}
+				}
+			});
+			
+		})	
+		
+		</script>    
+</body>
+</html>
